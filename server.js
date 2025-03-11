@@ -12,12 +12,34 @@ const SYSTEM_PROMPT = "You are a helpful assistant. This conversation is being t
 const sessions = new Map();
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-async function aiResponse(messages) {
-  let completion = await openai.chat.completions.create({
+async function aiResponseStream(messages, ws) {
+  const completion = await openai.chat.completions.create({
     model: "gpt-4o-mini",
     messages: messages,
+    stream: true,
   });
-  return completion.choices[0].message.content;
+
+  console.log("Received response chunks:");
+  for await (const chunk of completion) {
+    const content = chunk.choices[0].delta.content;
+    if (content) {
+      // Send each token
+      console.log(content);
+      ws.send(JSON.stringify({
+        type: "text",
+        token: content,
+        last: false,
+      }));
+    }
+  }
+
+  // Send the final "last" token when streaming completes
+  ws.send(JSON.stringify({
+    type: "text",
+    token: "",
+    last: true,
+  }));
+  console.log("Assistant response complete.");
 }
 
 const fastify = Fastify();
@@ -50,17 +72,7 @@ fastify.register(async function (fastify) {
           const conversation = sessions.get(ws.callSid);
           conversation.push({ role: "user", content: message.voicePrompt });
 
-          const response = await aiResponse(conversation);
-          conversation.push({ role: "assistant", content: response });
-
-          ws.send(
-            JSON.stringify({
-              type: "text",
-              token: response,
-              last: true,
-            })
-          );
-          console.log("Sent response:", response);
+          aiResponseStream(conversation, ws);
           break;
         case "interrupt":
           console.log("Handling interruption.");
