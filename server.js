@@ -31,6 +31,7 @@ async function aiResponseStream(conversation, ws) {
       token: content,
       last: false,
     }));
+
     assistantSegments.push(content);
   }
 
@@ -76,6 +77,7 @@ fastify.register(async function (fastify) {
           console.log("Processing prompt:", message.voicePrompt);
           const sessionData = sessions.get(ws.callSid);
           sessionData.conversation.push({ role: "user", content: message.voicePrompt });
+
           aiResponseStream(sessionData.conversation, ws);
           break;
         case "interrupt":
