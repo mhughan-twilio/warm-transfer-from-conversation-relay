@@ -1,5 +1,6 @@
 import Fastify from "fastify";
 import fastifyWs from "@fastify/websocket";
+import fastifyFormBody from '@fastify/formbody';
 import OpenAI from "openai";
 import dotenv from "dotenv";
 import axios from "axios";
@@ -126,7 +127,8 @@ async function aiResponseStream(conversation, ws) {
 
 const fastify = Fastify();
 fastify.register(fastifyWs);
-fastify.get("/twiml", async (request, reply) => {
+fastify.register(fastifyFormBody);
+fastify.all("/twiml", async (request, reply) => {
   reply.type("text/xml").send(
     `<?xml version="1.0" encoding="UTF-8"?>
     <Response>
