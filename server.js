@@ -13,24 +13,23 @@ const sessions = new Map();
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 async function aiResponseStream(messages, ws) {
-  const completion = await openai.chat.completions.create({
+  const stream = await openai.chat.completions.create({
     model: "gpt-4o-mini",
     messages: messages,
     stream: true,
   });
 
   console.log("Received response chunks:");
-  for await (const chunk of completion) {
-    const content = chunk.choices[0].delta.content;
-    if (content) {
-      // Send each token
-      console.log(content);
-      ws.send(JSON.stringify({
-        type: "text",
-        token: content,
-        last: false,
-      }));
-    }
+  for await (const chunk of stream) {
+    const content = chunk.choices[0]?.delta?.content || "";
+
+    // Send each token
+    console.log(content);
+    ws.send(JSON.stringify({
+      type: "text",
+      token: content,
+      last: false,
+    }));
   }
 
   // Send the final "last" token when streaming completes
