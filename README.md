@@ -1,6 +1,11 @@
 # Voice Assistant with Twilio and Open AI (Node.js)
 
-This application demonstrates how to use Node.js, [Twilio Voice](https://www.twilio.com/docs/voice) and [ConversationRelay](https://www.twilio.com/docs/voice/twiml/connect/conversationrelay), and the [Open AI API](https://docs.anthropic.com) to create a voice assistant that can engage in two-way conversations over a phone call. Other branches in this repository demonstrate how to add more advanced features such as streaming, interruption handling, and tool/function calling.
+This application demonstrates how to use Node.js, [Twilio Voice](https://www.twilio.com/docs/voice) and [ConversationRelay](https://www.twilio.com/docs/voice/twiml/connect/conversationrelay), and the [Open AI API](https://docs.anthropic.com) to create a voice assistant that can engage in two-way conversations over a phone call.
+
+Other branches in this repository demonstrate how to add more advanced features such as [streaming](https://github.com/robinske/cr-demo/tree/feature/step2-streaming-tokens), [interruption handling](https://github.com/robinske/cr-demo/tree/feature/step3-conversation-tracking), and [tool/function calling](https://github.com/robinske/cr-demo/tree/feature/step4-tool-calling).
+
+> [!NOTE]
+> Looking for a step by step tutorial? Find an [interative build guide for OpenAI and Twilio Voice here](https://github.com/robinske/forge-build-tutorial).
 
 ## Prerequisites
 
